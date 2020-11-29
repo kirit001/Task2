@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "847595463676",
+    "firebase_url": "https://checklist-fbaae.firebaseio.com",
+    "project_id": "checklist-fbaae",
+    "storage_bucket": "checklist-fbaae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:847595463676:android:936485767bca0122d74879",
+        "android_client_info": {
+          "package_name": "com.example.checklist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "847595463676-6pmaldbjtf1g6fs6kp9kav4avg3firep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS_DyCj2-tw2gaXQmwFUi5ezheg11DNJU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "847595463676-6pmaldbjtf1g6fs6kp9kav4avg3firep.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
