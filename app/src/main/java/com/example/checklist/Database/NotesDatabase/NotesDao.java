@@ -14,4 +14,7 @@ public interface NotesDao {
 
     @Query("SELECT * FROM Notes")
     List<NotesEntity> getall();
+
+    @Query("SELECT * FROM Notes WHERE id = :id")
+    NotesEntity getinfobyid(Long id);
 }
