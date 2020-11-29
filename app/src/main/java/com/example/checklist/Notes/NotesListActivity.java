@@ -2,12 +2,14 @@ package com.example.checklist.Notes;
 
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -23,12 +25,17 @@ import com.example.checklist.GoogleMaps.GoogleMapsActivity;
 import com.example.checklist.Login.LoginActivity;
 import com.example.checklist.Profile.ProfileActivity;
 import com.example.checklist.R;
+import com.example.checklist.Registration.RegisterActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NotesListActivity extends AppCompatActivity implements NotesListAdapter.OnDataClickListener {
 
     private RecyclerView recyclerView;
+    List<NotesEntity> notesData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +48,23 @@ public class NotesListActivity extends AppCompatActivity implements NotesListAda
         NotesDatabase notesDatabase = NotesDatabase.getNotesDatabase(getApplicationContext());
         NotesDao notesDao = notesDatabase.notesDao();
 
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.activityRecyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((NotesListActivity.this)));
-        recyclerView.setAdapter(new NotesListAdapter(this, notesDao.getall()));
+
+        notesData = new ArrayList<>();
+
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                notesData = notesDao.getall();
+                recyclerView.setAdapter(new NotesListAdapter(NotesListActivity.this, notesData));
+
+            }
+        });
+
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomnavigation);
 
