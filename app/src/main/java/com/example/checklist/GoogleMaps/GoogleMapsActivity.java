@@ -32,8 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -41,7 +39,6 @@ public class GoogleMapsActivity extends AppCompatActivity {
 
     SupportMapFragment supportMapFragment;
     FusedLocationProviderClient client;
-    ProgressDialog tempDialog = null;
 
     @SuppressLint("NonConstantResourceId")
     @Override
@@ -91,7 +88,6 @@ public class GoogleMapsActivity extends AppCompatActivity {
             }
             return false;
         });
-        showProgressDialog("Loading Map");
     }
 
     public void setTitle(String title) {
@@ -136,11 +132,9 @@ public class GoogleMapsActivity extends AppCompatActivity {
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
 
                     googleMap.addMarker(options);
-                    dismissProgressDialog();
                 });
             }
         });
-        dismissProgressDialog();
     }
 
     @Override
@@ -148,7 +142,6 @@ public class GoogleMapsActivity extends AppCompatActivity {
         if (requestCode == 44) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation();
-                dismissProgressDialog();
             }
         }
     }
@@ -157,18 +150,6 @@ public class GoogleMapsActivity extends AppCompatActivity {
     public void onBackPressed() {
         startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
         super.onBackPressed();
-    }
-
-    void showProgressDialog(String displayMessage){
-        tempDialog = new ProgressDialog(this);
-        tempDialog.setCancelable(false);
-        tempDialog.setMessage(displayMessage);
-        tempDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        tempDialog.show();
-    }
-
-    void dismissProgressDialog(){
-        if (tempDialog!=null) tempDialog.dismiss();
     }
 
     /*inflate option menu*/

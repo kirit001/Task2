@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="75sp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_profile">
 
@@ -21,93 +22,224 @@
             android:text="@string/user_info"
             android:textColor="@color/colorBlack" />
 
-        <RelativeLayout style="@style/profileDetailsLayout">
+        <LinearLayout
+            style="@style/profileDetailsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/nameImageView"
                 style="@style/profileDetailsImage"
+                android:layout_height="56dp"
                 android:contentDescription="@string/todo"
-                app:tint="@color/colorPrimary"
-                android:src="@drawable/ic_name" />
+                android:src="@drawable/ic_name"
+                app:tint="@color/colorPrimary" />
 
-            <TextView
-                style="@style/profileDetailsTextMain"
-                android:layout_toEndOf="@id/nameImageView"
-                android:layout_toRightOf="@id/nameImageView"
-                android:text="@string/name"
-                android:textColor="@color/colorBlack" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_username1"
-                style="@style/profileDetailsMiniText"
-                android:layout_toEndOf="@id/nameImageView"
-                android:layout_toRightOf="@id/nameImageView"
-                android:textColor="@color/colorBlack" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </RelativeLayout>
+                    <TextView
+                        android:id="@+id/first_name"
+                        style="@style/profileDetailsTextMain"
+                        android:layout_width="wrap_content"
+                        android:text="@string/first_name"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/tv_firstname"
+                        style="@style/profileDetailsMiniText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/first_name"
+                        android:textColor="@color/colorBlack" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/editfirstname"
+                    style="@style/profileDetailsImage"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/todo"
+                    android:focusable="true"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/colorPrimary" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <View style="@style/proifleDetailsView" />
 
+        <LinearLayout
+            style="@style/profileDetailsLayout"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/nameImageView2"
+                style="@style/profileDetailsImage"
+                android:layout_height="56dp"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_name"
+                app:tint="@color/colorPrimary" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/last_name"
+                        style="@style/profileDetailsTextMain"
+                        android:text="@string/last_name"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/tv_lastname"
+                        style="@style/profileDetailsMiniText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/last_name"
+                        android:textColor="@color/colorBlack" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/editlastname"
+                    style="@style/profileDetailsImage"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/todo"
+                    android:focusable="true"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/colorPrimary" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
         <View style="@style/proifleDetailsView" />
 
-        <RelativeLayout style="@style/profileDetailsLayout">
+        <LinearLayout
+            style="@style/profileDetailsLayout"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/emailImageView"
                 style="@style/profileDetailsImage"
+                android:layout_height="56dp"
                 android:contentDescription="@string/todo"
                 android:src="@drawable/ic_email"
                 app:tint="@color/colorPrimary" />
 
-            <TextView
-                style="@style/profileDetailsTextMain"
-                android:layout_toEndOf="@id/emailImageView"
-                android:layout_toRightOf="@id/emailImageView"
-                android:text="@string/email"
-                android:textColor="@color/colorBlack" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_email"
-                style="@style/profileDetailsMiniText"
-                android:layout_toEndOf="@id/emailImageView"
-                android:layout_toRightOf="@id/emailImageView"
-                android:textColor="@color/colorBlack" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-        </RelativeLayout>
+                    <TextView
+                        style="@style/profileDetailsTextMain"
+                        android:id="@+id/EMAIL"
+                        android:text="@string/email"
+                        android:textColor="@color/colorBlack" />
+
+                    <TextView
+                        android:id="@+id/tv_email"
+                        android:layout_below="@+id/EMAIL"
+                        style="@style/profileDetailsMiniText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/colorBlack" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/EDITemail"
+                    style="@style/profileDetailsImage"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/todo"
+                    android:focusable="true"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/colorPrimary" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <View style="@style/proifleDetailsView" />
 
-        <RelativeLayout
+        <LinearLayout
             style="@style/profileDetailsLayout"
-            android:layout_marginBottom="75sp">
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/addressImageView"
                 style="@style/profileDetailsImage"
+                android:layout_height="56dp"
                 android:contentDescription="@string/todo"
-                app:tint="@color/colorPrimary"
-                android:src="@drawable/ic_address" />
+                android:src="@drawable/ic_address"
+                app:tint="@color/colorPrimary" />
 
-            <TextView
-                style="@style/profileDetailsTextMain"
-                android:layout_toEndOf="@id/addressImageView"
-                android:layout_toRightOf="@id/addressImageView"
-                android:text="@string/address"
-                android:textColor="@color/colorBlack" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_address"
-                style="@style/profileDetailsMiniText"
-                android:layout_toEndOf="@id/addressImageView"
-                android:layout_toRightOf="@id/addressImageView"
-                android:textColor="@color/colorBlack" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-        </RelativeLayout>
+                    <TextView
+                        android:id="@+id/Address"
+                        style="@style/profileDetailsTextMain"
+                        android:text="@string/address"
+                        android:textColor="@color/colorBlack" />
 
-        <View style="@style/proifleDetailsView" />
+                    <TextView
+                        android:id="@+id/tv_address"
+                        style="@style/profileDetailsMiniText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/Address"
+                        android:textColor="@color/colorBlack" />
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/editaddress"
+                    style="@style/profileDetailsImage"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:clickable="true"
+                    android:contentDescription="@string/todo"
+                    android:focusable="true"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/colorPrimary" />
+            </RelativeLayout>
+
+        </LinearLayout>
 
         <View style="@style/proifleDetailsView" />
 
     </LinearLayout>
 
-</androidx.core.widget.NestedScrollView>
+</ScrollView>

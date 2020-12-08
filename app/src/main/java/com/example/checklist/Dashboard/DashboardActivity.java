@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,18 +33,12 @@ import com.example.checklist.RestApi.Adapter;
 import com.example.checklist.RestApi.Api;
 import com.example.checklist.RestApi.Model;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,21 +69,17 @@ public class DashboardActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
         sharedPreferences = getSharedPreferences("loginref", MODE_PRIVATE);
 
+        String user = sharedPreferences.getString("email", "");
+
         UserDatabase userDatabase = UserDatabase.getUserDatabase(getApplicationContext());
-        UserDao userDao= userDatabase.userDao();
-        Log.d(TAG, "onCreate: " + userDao.toString());
+        UserDao userDao = userDatabase.userDao();
         new Thread(() -> {
-            UserEntity userEntity = userDao.getall();
-            if (userEntity == null){
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Invalid credentials", Toast.LENGTH_SHORT).show());
-            }
-            else {
-                String name = userEntity.getFirstname() + " " + userEntity.getLastname();
-                username.setText(name);
-            }
+            UserEntity userEntity = userDao.getuser(user);
+            String name = userEntity.getFirstname() + " " + userEntity.getLastname();
+            username.setText(name);
         }).start();
 
-        showProgressDialog("Loading Data...");
+        showProgressDialog();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomnavigation);
 
@@ -152,23 +143,20 @@ public class DashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        String user = sharedPreferences.getString("email", "");
+
         UserDatabase userDatabase = UserDatabase.getUserDatabase(getApplicationContext());
-        UserDao userDao= userDatabase.userDao();
+        UserDao userDao = userDatabase.userDao();
         new Thread(() -> {
-            UserEntity userEntity = userDao.getall();
-            if (userEntity == null){
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Invalid credentials", Toast.LENGTH_SHORT).show());
-            }
-            else {
-                String name = userEntity.getFirstname() + " " + userEntity.getLastname();
-                username.setText(name);
-            }
+            UserEntity userEntity = userDao.getuser(user);
+            String name = userEntity.getFirstname() + " " + userEntity.getLastname();
+            username.setText(name);
         }).start();
         super.onStart();
     }
 
     public void setTitle(String title) {
-        getSupportActionBar().setHomeButtonEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView textView = new TextView(this);
         textView.setText(title);
@@ -206,16 +194,16 @@ public class DashboardActivity extends AppCompatActivity {
         //get item id
         int id = item.getItemId();
         if (id == R.id.action_logout) {
-            Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
-    void showProgressDialog(String displayMessage) {
+    void showProgressDialog() {
         tempDialog = new ProgressDialog(this);
         tempDialog.setCancelable(true);
-        tempDialog.setMessage(displayMessage);
+        tempDialog.setMessage("Loading Data...");
         tempDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         tempDialog.show();
     }

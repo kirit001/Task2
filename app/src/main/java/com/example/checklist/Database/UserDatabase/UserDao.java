@@ -15,4 +15,19 @@ public interface UserDao {
 
     @Query("SELECT * FROM User")
     UserEntity getall();
+
+    @Query("SELECT * FROM User where email= :email")
+    UserEntity getuser(String email);
+
+    @Query("UPDATE User SET firstname = :firstname WHERE email  = :email")
+    void editfirstname(String email, String firstname);
+
+    @Query("UPDATE User SET lastname = :lastname WHERE email  = :email")
+    void editlastname(String email, String lastname);
+
+    @Query("UPDATE User SET email = :email WHERE id = :id")
+    void editemail(Integer id, String email);
+
+    @Query("UPDATE User SET address = :address WHERE email  = :email")
+    void editaddress(String email, String address);
 }

@@ -1,14 +1,26 @@
 package com.example.checklist.Profile;
 
-import android.app.ProgressDialog;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,23 +39,26 @@ import com.example.checklist.Login.LoginActivity;
 import com.example.checklist.Notes.NotesListActivity;
 import com.example.checklist.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Objects;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private static final String TAG = "ProfileActivity";
-
-    ProgressDialog tempDialog = null;
-    private TextView username,email1,address1;
-    private ImageView profilepic;
+    private static final String TAG = "profilepic";
+    final Context context = this;
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    int REQUEST_CAMERA = 1, SELCTE_FILE = 0;
+    ImageView profilepic;
+    TextView firstname, lastname, email1, address1;
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,30 +69,41 @@ public class ProfileActivity extends AppCompatActivity {
 
         //init
         sharedPreferences = getSharedPreferences("loginref", MODE_PRIVATE);
-        username = findViewById(R.id.tv_username1);
+        editor = sharedPreferences.edit();
+        firstname = findViewById(R.id.tv_firstname);
+        lastname = findViewById(R.id.tv_lastname);
         email1 = findViewById(R.id.tv_email);
         address1 = findViewById(R.id.tv_address);
         profilepic = findViewById(R.id.iv_profile);
+        ImageView editfirstname = findViewById(R.id.editfirstname);
+        ImageView editlastname = findViewById(R.id.editlastname);
+        ImageView editemail = findViewById(R.id.EDITemail);
+        ImageView editaddress = findViewById(R.id.editaddress);
 
-        showProgressDialog("Loading Profile...");
+        try {
+            String result = sharedPreferences.getString("PROFILE_IMAGE", "");
+            final InputStream imageStream = getApplicationContext().getContentResolver().openInputStream(Uri.parse(result));
+            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+            profilepic.setImageBitmap(selectedImage);
+        } catch (NullPointerException e) {
+        } catch (FileNotFoundException e) {
+        }
+
+        String user = sharedPreferences.getString("email", "");
 
         UserDatabase userDatabase = UserDatabase.getUserDatabase(getApplicationContext());
         UserDao userDao = userDatabase.userDao();
         new Thread(() -> {
-            UserEntity userEntity = userDao.getall();
-                if (userEntity == null) {
-                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Invalid credentials", Toast.LENGTH_SHORT).show());
-                } else {
-                    String name = userEntity.getFirstname() + " " + userEntity.getLastname();
-                    String email = userEntity.getEmail();
-                    String address = userEntity.getAddress();
-                    username.setText(name);
-                    email1.setText(email);
-                    address1.setText(address);
-                }
+            UserEntity userEntity = userDao.getuser(user);
+            String first = userEntity.getFirstname();
+            String last = userEntity.getLastname();
+            String email = userEntity.getEmail();
+            String address = userEntity.getAddress();
+            firstname.setText(first);
+            lastname.setText(last);
+            email1.setText(email);
+            address1.setText(address);
         }).start();
-
-        dismissProgressDialog();
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomnavigation);
 
@@ -105,31 +131,211 @@ public class ProfileActivity extends AppCompatActivity {
             }
             return false;
         });
+
+        editfirstname.setOnClickListener(view -> {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.edit_firstname, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    context);
+
+            // set prompts.xml to alertdialog builder
+            alertDialogBuilder.setView(promptsView);
+
+            final EditText userInput = promptsView
+                    .findViewById(R.id.edit_firstname);
+
+            userInput.setText(firstname.getText());
+
+            // set dialog message
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("OK",
+                            (dialog, id) -> {
+                                // get user input and set it to result
+                                // edit text
+                                String user1 = userInput.getText().toString();
+                                String email = email1.getText().toString();
+
+                                UserDatabase userDatabase1 = UserDatabase.getUserDatabase(getApplicationContext());
+                                UserDao userDao1 = userDatabase1.userDao();
+                                new Thread(() -> {
+                                    userDao1.editfirstname(email, user1);
+                                    UserEntity userEntity = userDao1.getuser(email);
+                                    firstname.setText(userEntity.getFirstname());
+                                }).start();
+                            })
+                    .setNegativeButton("Cancel",
+                            (dialog, id) -> dialog.cancel());
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+        });
+
+        editlastname.setOnClickListener(view -> {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.edit_lastname, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    context);
+
+            // set prompts.xml to alertdialog builder
+            alertDialogBuilder.setView(promptsView);
+
+            final EditText userInput = promptsView
+                    .findViewById(R.id.edit_lastname);
+
+            userInput.setText(lastname.getText());
+
+            // set dialog message
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("OK",
+                            (dialog, id) -> {
+                                // get user input and set it to result
+                                // edit text
+                                String user12 = userInput.getText().toString();
+                                String email = email1.getText().toString();
+
+                                UserDatabase userDatabase12 = UserDatabase.getUserDatabase(getApplicationContext());
+                                UserDao userDao12 = userDatabase12.userDao();
+                                new Thread(() -> {
+                                    userDao12.editlastname(email, user12);
+                                    UserEntity userEntity = userDao12.getuser(email);
+                                    lastname.setText(userEntity.getLastname());
+                                }).start();
+                            })
+                    .setNegativeButton("Cancel",
+                            (dialog, id) -> dialog.cancel());
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+        });
+
+        editemail.setOnClickListener(view -> {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.edit_email, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    context);
+
+            // set prompts.xml to alertdialog builder
+            alertDialogBuilder.setView(promptsView);
+
+            final EditText userInput = promptsView
+                    .findViewById(R.id.edit_email);
+
+            userInput.setText(email1.getText());
+
+            // set dialog message
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("OK",
+                            (dialog, id) -> {
+                                // get user input and set it to result
+                                // edit text
+                                String user13 = userInput.getText().toString();
+                                String email = email1.getText().toString();
+
+                                UserDatabase userDatabase12 = UserDatabase.getUserDatabase(getApplicationContext());
+                                UserDao userDao12 = userDatabase12.userDao();
+                                new Thread(() -> {
+                                    UserEntity userEntity = userDao12.getuser(email);
+                                    Integer ID = userEntity.getId();
+                                    userDao12.editemail(ID, user13);
+                                    email1.setText(userEntity.getEmail());
+                                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                                    editor.clear();
+                                    editor.putBoolean("savelogin", false);
+                                    editor.commit();
+                                }).start();
+                            })
+                    .setNegativeButton("Cancel",
+                            (dialog, id) -> dialog.cancel());
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+        });
+
+        editaddress.setOnClickListener(view -> {
+            LayoutInflater li = LayoutInflater.from(context);
+            View promptsView = li.inflate(R.layout.edit_address, null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    context);
+
+            // set prompts.xml to alertdialog builder
+            alertDialogBuilder.setView(promptsView);
+
+            final EditText userInput = promptsView
+                    .findViewById(R.id.edit_address);
+
+            userInput.setText(address1.getText());
+
+            // set dialog message
+            alertDialogBuilder
+                    .setCancelable(false)
+                    .setPositiveButton("OK",
+                            (dialog, id) -> {
+                                // get user input and set it to result
+                                // edit text
+                                String user14 = userInput.getText().toString();
+                                String email = email1.getText().toString();
+
+                                UserDatabase userDatabase13 = UserDatabase.getUserDatabase(getApplicationContext());
+                                UserDao userDao13 = userDatabase13.userDao();
+                                new Thread(() -> {
+                                    userDao13.editaddress(email, user14);
+                                    UserEntity userEntity = userDao13.getuser(email);
+                                    address1.setText(userEntity.getAddress());
+                                }).start();
+                            })
+                    .setNegativeButton("Cancel",
+                            (dialog, id) -> dialog.cancel());
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+        });
+
     }
 
     @Override
     protected void onStart() {
+
+        sharedPreferences = getSharedPreferences("loginref", MODE_PRIVATE);
+
+        String user = sharedPreferences.getString("email", "");
+
         UserDatabase userDatabase = UserDatabase.getUserDatabase(getApplicationContext());
-        UserDao userDao= userDatabase.userDao();
+        UserDao userDao = userDatabase.userDao();
         new Thread(() -> {
-            UserEntity userEntity = userDao.getall();
-            if (userEntity == null){
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Invalid credentials", Toast.LENGTH_SHORT).show());
-            }
-            else {
-                String name = userEntity.getFirstname() + " " + userEntity.getLastname();
-                String email = userEntity.getEmail();
-                String address = userEntity.getAddress();
-                username.setText(name);
-                email1.setText(email);
-                address1.setText(address);
-            }
+            UserEntity userEntity = userDao.getuser(user);
+            String first = userEntity.getFirstname();
+            String last = userEntity.getLastname();
+            String email = userEntity.getEmail();
+            String address = userEntity.getAddress();
+            firstname.setText(first);
+            lastname.setText(last);
+            email1.setText(email);
+            address1.setText(address);
         }).start();
         super.onStart();
     }
 
-    public void setTitle(String title){
-        getSupportActionBar().setHomeButtonEnabled(true);
+    public void setTitle(String title) {
+        Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView textView = new TextView(this);
         textView.setText(title);
@@ -140,6 +346,12 @@ public class ProfileActivity extends AppCompatActivity {
         textView.setTextColor(getResources().getColor(R.color.white));
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(textView);
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+        super.onBackPressed();
     }
 
     /*inflate option menu*/
@@ -158,27 +370,102 @@ public class ProfileActivity extends AppCompatActivity {
         //get item id
         int id = item.getItemId();
         if (id == R.id.action_logout) {
-            Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
 
+    public void PickProfile(View view) {
+        SelectImage();
+    }
+
+    private void SelectImage() {
+        final CharSequence[] items = {"Camera", "Gallery", "Cancel"};
+
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(ProfileActivity.this);
+        builder.setTitle("Add Image");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (items[i].equals("Camera")) {
+                    TedPermission.with(ProfileActivity.this)
+                            .setPermissionListener(new PermissionListener() {
+                                @Override
+                                public void onPermissionGranted() {
+                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    startActivityForResult(intent, REQUEST_CAMERA);
+                                }
+
+                                @Override
+                                public void onPermissionDenied(List<String> deniedPermissions) {
+
+                                }
+                            })
+                            .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                            .setPermissions(Manifest.permission.CAMERA)
+                            .check();
+                } else if (items[i].equals("Gallery")) {
+                    TedPermission.with(ProfileActivity.this)
+                            .setPermissionListener(new PermissionListener() {
+                                @Override
+                                public void onPermissionGranted() {
+                                    Intent intent = new Intent(Intent.ACTION_PICK);
+                                    //set intent type to image
+                                    intent.setType("image/*");
+                                    startActivityForResult(intent, SELCTE_FILE);
+                                }
+
+                                @Override
+                                public void onPermissionDenied(List<String> deniedPermissions) {
+
+                                }
+                            })
+                            .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                            .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                            .check();
+                } else if (items[i].equals("Cancel")) {
+                    dialogInterface.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
     @Override
-    public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
-        super.onBackPressed();
-    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-    void showProgressDialog(String displayMessage){
-        tempDialog = new ProgressDialog(this);
-        tempDialog.setCancelable(true);
-        tempDialog.setMessage(displayMessage);
-        tempDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        tempDialog.show();
-    }
-
-    void dismissProgressDialog(){
-        if (tempDialog!=null) tempDialog.dismiss();
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CAMERA) {
+//                try {
+////                    Uri imageUri = data.getData();
+////                    sharedPreferences.edit().putString("PROFILE_IMAGE",imageUri.toString()).apply();
+////                    final InputStream imageStream = ProfileActivity.this.getContentResolver().openInputStream(imageUri);
+////                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+////                    profilepic.setImageBitmap(selectedImage);
+////                    Log.d("image_uri", new Gson().toJson(imageUri.getPath()));
+//                }
+//
+//                catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                    Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+//                }
+            } else if (requestCode == SELCTE_FILE) {
+                try {
+                    Uri imageUri = data.getData();
+                    Log.d("imageUri", imageUri.getPath());
+                    sharedPreferences.edit().putString("PROFILE_IMAGE", imageUri.toString()).apply();
+                    final InputStream imageStream = ProfileActivity.this.getContentResolver().openInputStream(imageUri);
+                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                    profilepic.setImageBitmap(selectedImage);
+                    Log.d("image_uri", new Gson().toJson(imageUri.getPath()));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
     }
 }

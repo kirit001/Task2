@@ -3,13 +3,11 @@ package com.example.checklist.Notes;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,15 +15,10 @@ import com.example.checklist.Dashboard.DashboardActivity;
 import com.example.checklist.Database.NotesDatabase.NotesDao;
 import com.example.checklist.Database.NotesDatabase.NotesDatabase;
 import com.example.checklist.Database.NotesDatabase.NotesEntity;
-import com.example.checklist.Database.UserDatabase.UserDao;
-import com.example.checklist.Database.UserDatabase.UserDatabase;
-import com.example.checklist.Database.UserDatabase.UserEntity;
 import com.example.checklist.GoogleMaps.GoogleMapsActivity;
 import com.example.checklist.Profile.ProfileActivity;
 import com.example.checklist.R;
-import com.example.checklist.Registration.RegisterActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class AddNotesActivity extends AppCompatActivity {
 
@@ -42,7 +35,7 @@ public class AddNotesActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setCustomView(R.layout.custom_action_bar_layout);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar_backarrow_layout);
         View view = getSupportActionBar().getCustomView();
 
         ImageButton imageButton = view.findViewById(R.id.action_bar_back);

@@ -1,5 +1,6 @@
 package com.example.checklist.Notes;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
@@ -28,6 +29,8 @@ import com.example.checklist.R;
 import com.example.checklist.Registration.RegisterActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +48,17 @@ public class NotesListActivity extends AppCompatActivity implements NotesListAda
         //Actionbar and its title
         setTitle("List of Notes");
 
+        checkPermission();
+
         NotesDatabase notesDatabase = NotesDatabase.getNotesDatabase(getApplicationContext());
         NotesDao notesDao = notesDatabase.notesDao();
 
         recyclerView = findViewById(R.id.activityRecyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager((NotesListActivity.this)));
+//        recyclerView.setAdapter(new NotesListAdapter(this, notesDao.getall()));
 
         notesData = new ArrayList<>();
-
 
         AsyncTask.execute(new Runnable() {
             @Override
@@ -98,6 +103,23 @@ public class NotesListActivity extends AppCompatActivity implements NotesListAda
         });
     }
 
+    private void checkPermission() {
+        PermissionListener permissionListener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+            }
+
+            @Override
+            public void onPermissionDenied(List<String> deniedPermissions) {
+//                Toast.makeText(getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        };
+        TedPermission.with(this)
+                .setPermissionListener(permissionListener)
+                .setPermissions(Manifest.permission.READ_PHONE_STATE)
+                .check();
+    }
+
     public void setTitle(String title) {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -127,6 +149,12 @@ public class NotesListActivity extends AppCompatActivity implements NotesListAda
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPermission();
+    }
+
     /*handel menu item clicks*/
 
     @Override
@@ -142,6 +170,8 @@ public class NotesListActivity extends AppCompatActivity implements NotesListAda
 
     @Override
     public void onClick(NotesEntity notesEntity) {
-        startActivity(new Intent(getApplicationContext(), NotesEditActivity.class).putExtra("id", notesEntity.getId()));
+        notesEntity.setNotes(notesEntity.getNotes());
+        startActivity(new Intent(getApplicationContext(), NotesEditActivity.class).putExtra("id", notesEntity.getId())
+                .putExtra("title",notesEntity.getTitle()).putExtra("notes",notesEntity.getNotes()));
     }
 }

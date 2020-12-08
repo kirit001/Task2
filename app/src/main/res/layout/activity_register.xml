@@ -8,7 +8,7 @@
     tools:context=".Registration.RegisterActivity">
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="UselessParent">
 
@@ -20,21 +20,23 @@
             app:cardPreventCornerOverlap="false"
             app:cardUseCompatPadding="true">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:id="@+id/linearLayout1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="30sp"
                     android:gravity="center"
                     android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_gravity="center_vertical"
+                        android:layout_gravity="left"
                         android:clickable="true"
                         android:contentDescription="@string/todo"
                         android:focusable="true"
@@ -46,25 +48,28 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
                         <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:layout_marginTop="20dp"
-                            android:background="@drawable/circle"
+                            android:id="@+id/IV_Profile"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_marginEnd="50sp"
+                            android:layout_marginRight="50sp"
+                            android:clickable="true"
+                            android:src="@mipmap/ic_launcher_round"
                             android:contentDescription="@string/todo"
-                            android:src="@drawable/img_register"
-                            app:tint="@color/colorPrimary" />
+                            android:focusable="true"
+                            android:onClick="changeProfile" />
 
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/relativeLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/linearLayout1"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="30dp"
                     android:layout_marginRight="30dp"
@@ -80,6 +85,12 @@
                         android:src="@drawable/ic_name"
                         app:tint="@color/white" />
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/firstnameTIL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/colorPrimary">
+
                         <EditText
                             android:id="@+id/tv_firstname"
                             android:layout_width="match_parent"
@@ -94,6 +105,7 @@
                             android:textColorHint="@color/colorPrimary"
                             android:textSize="15sp"
                             tools:ignore="RtlSymmetry" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
 
@@ -101,7 +113,6 @@
                     android:id="@+id/relativeLayout1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/relativeLayout"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="30dp"
@@ -117,20 +128,27 @@
                         android:src="@drawable/ic_name"
                         app:tint="@color/white" />
 
-                    <EditText
-                        android:id="@+id/tv_lastname"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/lastnameTIL"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/edittext_box"
-                        android:hint="@string/last_name"
-                        android:importantForAutofill="no"
-                        android:inputType="text"
-                        android:paddingStart="20dp"
-                        android:paddingLeft="20dp"
-                        android:textColor="@color/colorPrimary"
-                        android:textColorHint="@color/colorPrimary"
-                        android:textSize="15sp"
-                        tools:ignore="RtlSymmetry" />
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/colorPrimary">
+
+                        <EditText
+                            android:id="@+id/tv_lastname"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/edittext_box"
+                            android:hint="@string/last_name"
+                            android:importantForAutofill="no"
+                            android:inputType="text"
+                            android:paddingStart="20dp"
+                            android:paddingLeft="20dp"
+                            android:textColor="@color/colorPrimary"
+                            android:textColorHint="@color/colorPrimary"
+                            android:textSize="15sp"
+                            tools:ignore="RtlSymmetry" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
 
@@ -138,7 +156,6 @@
                     android:id="@+id/relativeLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/relativeLayout1"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="30dp"
@@ -153,6 +170,14 @@
                         android:padding="8dp"
                         android:src="@drawable/img_authentication"
                         app:tint="@color/white" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/passwordTIL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/colorPrimary"
+                        app:passwordToggleEnabled="true"
+                        app:passwordToggleTint="@color/colorPrimary">
 
                         <EditText
                             android:id="@+id/tv_password"
@@ -169,13 +194,14 @@
                             android:textSize="15sp"
                             tools:ignore="RtlSymmetry" />
 
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/relativeLayout3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/relativeLayout2"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="30dp"
@@ -190,6 +216,14 @@
                         android:padding="8dp"
                         android:src="@drawable/img_authentication"
                         app:tint="@color/white" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/confirmTIL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/colorPrimary"
+                        app:passwordToggleEnabled="true"
+                        app:passwordToggleTint="@color/colorPrimary">
 
                         <EditText
                             android:id="@+id/tv_confirm_password"
@@ -206,13 +240,14 @@
                             android:textSize="15sp"
                             tools:ignore="RtlSymmetry" />
 
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/relativeLayout5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/relativeLayout3"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="30dp">
@@ -226,6 +261,12 @@
                         android:padding="8dp"
                         android:src="@drawable/img_email"
                         app:tint="@color/white" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/emailTIL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/colorPrimary">
 
                         <EditText
                             android:id="@+id/tv_email"
@@ -242,13 +283,14 @@
                             android:textSize="15sp"
                             tools:ignore="RtlSymmetry" />
 
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/relativeLayout6"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/relativeLayout5"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="30dp"
@@ -263,6 +305,12 @@
                         android:padding="8dp"
                         android:src="@drawable/ic_address"
                         app:tint="@color/white" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/addressTIL"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/colorPrimary">
 
                         <EditText
                             android:id="@+id/tv_address"
@@ -279,13 +327,14 @@
                             android:textSize="15sp"
                             tools:ignore="RtlSymmetry" />
 
+                    </com.google.android.material.textfield.TextInputLayout>
+
                 </LinearLayout>
 
                 <CheckBox
                     android:id="@+id/chkBox1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/relativeLayout6"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="30dp"
@@ -298,7 +347,6 @@
                     android:id="@+id/btn_register"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/chkBox1"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="15dp"
                     android:layout_marginRight="30dp"
@@ -308,7 +356,7 @@
                     android:text="@string/signup"
                     android:textColor="@color/white" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
         </androidx.cardview.widget.CardView>
     </ScrollView>

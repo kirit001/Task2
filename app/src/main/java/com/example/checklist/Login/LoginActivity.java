@@ -1,7 +1,6 @@
 package com.example.checklist.Login;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -25,14 +24,15 @@ import com.example.checklist.Database.UserDatabase.UserEntity;
 import com.example.checklist.PasswordReset.PasswordResetActivity;
 import com.example.checklist.R;
 import com.example.checklist.Registration.RegisterActivity;
-import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
 
     //declaring shared preference
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-    //declaring views,checkbox and FirebaseAuth
+    //declaring views,checkbox
     EditText username, password;
     CheckBox checkbox;
 
@@ -69,11 +69,10 @@ public class LoginActivity extends AppCompatActivity {
         if (!Patterns.EMAIL_ADDRESS.matcher(Username).matches()) {
             username.setError("Invalid Email");
             username.setFocusable(true);
-        } else if (Username.isEmpty()){
+        } else if (Username.isEmpty()) {
             password.setError("Email is empty");
             password.setFocusable(true);
-        }
-        else if (Password.isEmpty()) {
+        } else if (Password.isEmpty()) {
             password.setError("Password is empty");
             password.setFocusable(true);
         } else {
@@ -92,18 +91,14 @@ public class LoginActivity extends AppCompatActivity {
             editor.commit();
 
             UserDatabase userDatabase = UserDatabase.getUserDatabase(getApplicationContext());
-            UserDao userDao= userDatabase.userDao();
+            UserDao userDao = userDatabase.userDao();
             new Thread(() -> {
-                UserEntity userEntity = userDao.login(Username,Password);
-                if (userEntity == null){
+                UserEntity userEntity = userDao.login(Username, Password);
+                if (userEntity == null) {
                     runOnUiThread(() -> Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show());
-                }
-                else {
-                    String name = userEntity.getFirstname() + " " + userEntity.getLastname();
-                    String email = userEntity.getEmail();
-                    String address = userEntity.getAddress();
-                    Intent intent = new Intent(getApplicationContext(),DashboardActivity.class);
-                    startActivity(intent.putExtra("name",name).putExtra("email",email).putExtra("address",address));
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+                    startActivity(intent);
                 }
             }).start();
         } else {
@@ -113,15 +108,13 @@ public class LoginActivity extends AppCompatActivity {
             editor.commit();
 
             UserDatabase userDatabase = UserDatabase.getUserDatabase(getApplicationContext());
-            UserDao userDao= userDatabase.userDao();
+            UserDao userDao = userDatabase.userDao();
             new Thread(() -> {
-                UserEntity userEntity = userDao.login(Username,Password);
-                if (userEntity == null){
+                UserEntity userEntity = userDao.login(Username, Password);
+                if (userEntity == null) {
                     runOnUiThread(() -> Toast.makeText(LoginActivity.this, "Invalid credentials", Toast.LENGTH_SHORT).show());
-                }
-                else {
-                    String name = userEntity.getFirstname() + " " + userEntity.getLastname();
-                    Intent intent = new Intent(getApplicationContext(),DashboardActivity.class);
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
                     startActivity(intent);
                 }
             }).start();
@@ -135,8 +128,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    public void setTitle(String title){
-        getSupportActionBar().setHomeButtonEnabled(true);
+    public void setTitle(String title) {
+        Objects.requireNonNull(getSupportActionBar()).setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TextView textView = new TextView(this);
         textView.setText(title);

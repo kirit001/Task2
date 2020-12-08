@@ -50,15 +50,31 @@
                 android:textSize="15sp"
                 tools:targetApi="lollipop" />
 
-            <Button
-                android:id="@+id/button2"
-                android:layout_gravity="center"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_notes"
-                android:textColor="@color/colorWhite"
-                android:layout_marginBottom="75sp"
-                android:onClick="submit" />
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="75sp">
+
+                <Button
+                    android:id="@+id/save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="save"
+                    android:layout_marginRight="50sp"
+                    android:text="@string/save"
+                    android:textColor="@color/colorWhite" />
+
+                <Button
+                    android:id="@+id/delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="delete"
+                    android:text="@string/delete"
+                    android:textColor="@color/colorWhite" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

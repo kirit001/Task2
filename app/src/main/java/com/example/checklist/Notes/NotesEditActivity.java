@@ -4,22 +4,20 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.checklist.Dashboard.DashboardActivity;
 import com.example.checklist.Database.NotesDatabase.NotesDao;
 import com.example.checklist.Database.NotesDatabase.NotesDatabase;
-import com.example.checklist.Database.NotesDatabase.NotesEntity;
 import com.example.checklist.GoogleMaps.GoogleMapsActivity;
-import com.example.checklist.Login.LoginActivity;
 import com.example.checklist.Profile.ProfileActivity;
 import com.example.checklist.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -27,7 +25,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class NotesEditActivity extends AppCompatActivity {
 
     EditText Title, Message;
-    NotesEntity notesEntity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +34,27 @@ public class NotesEditActivity extends AppCompatActivity {
         //Actionbar and its title
         setTitle("Edit Notes");
 
+        String title = NotesEditActivity.this.getIntent().getStringExtra("title");
+        String notes = NotesEditActivity.this.getIntent().getStringExtra("notes");
+
         Title = findViewById(R.id.EditTitle);
         Message = findViewById(R.id.EditMessage);
+
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.custom_action_bar_backarrow_layout);
+        View view = getSupportActionBar().getCustomView();
+
+        ImageButton imageButton = view.findViewById(R.id.action_bar_back);
+
+        imageButton.setOnClickListener(v -> finish());
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomnavigation);
 
         bottomNavigationView.setSelectedItemId(R.id.action_List);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(menuItem -> {
-            switch (menuItem.getItemId()) {
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
                 case R.id.action_home:
                     Intent a = new Intent(getApplicationContext(), DashboardActivity.class);
                     startActivity(a);
@@ -57,35 +66,21 @@ public class NotesEditActivity extends AppCompatActivity {
                     overridePendingTransition(0, 0);
                     return true;
                 case R.id.action_List:
+                    Intent c = new Intent(getApplicationContext(), NotesListActivity.class);
+                    startActivity(c);
+                    overridePendingTransition(0, 0);
                     return true;
                 case R.id.action_maps:
-                    Intent c = new Intent(getApplicationContext(), GoogleMapsActivity.class);
-                    startActivity(c);
+                    Intent d = new Intent(getApplicationContext(), GoogleMapsActivity.class);
+                    startActivity(d);
                     overridePendingTransition(0, 0);
                     return true;
             }
             return false;
         });
 
-        NotesDatabase notesDatabase = NotesDatabase.getNotesDatabase(getApplicationContext());
-        NotesDao notesDao = notesDatabase.notesDao();
-
-        new Thread(() -> {
-            try {
-                notesEntity = notesDao.getinfobyid(NotesEditActivity.this.getIntent().getLongExtra("id",
-                        0L));
-            }
-            finally {
-                String title = notesEntity.getTitle();
-                String message = notesEntity.getNotes();
-
-                Title.setText(title);
-                Message.setText(message);
-
-            }
-
-
-        }).start();
+        Title.setText(title);
+        Message.setText(notes);
     }
 
     public void setTitle(String title) {
@@ -104,29 +99,51 @@ public class NotesEditActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
+        startActivity(new Intent(getApplicationContext(), NotesListActivity.class));
         super.onBackPressed();
     }
 
-    /*inflate option menu*/
+    public void save(View view) {
+        Integer id = NotesEditActivity.this.getIntent().getIntExtra("id", 0);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //inflate menu
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
+        String title =Title.getText().toString();
+        String notes =Message.getText().toString();
+
+        NotesDatabase notesDatabase = NotesDatabase.getNotesDatabase(getApplicationContext());
+        NotesDao notesdao = notesDatabase.notesDao();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                notesdao.editinfo(id,title,notes);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Note has been updated", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), NotesListActivity.class));
+                    }
+                });
+            }
+        }).start();
     }
 
-    /*handel menu item clicks*/
+    public void delete(View view) {
+        Integer id = NotesEditActivity.this.getIntent().getIntExtra("id", 0);
+        NotesDatabase notesDatabase = NotesDatabase.getNotesDatabase(getApplicationContext());
+        NotesDao notesdao = notesDatabase.notesDao();
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        //get item id
-        int id = item.getItemId();
-        if (id == R.id.action_logout) {
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                notesdao.deleteById(id);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Note has been deleted", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(getApplicationContext(), NotesListActivity.class));
+                    }
+                });
+            }
+        }).start();
     }
 }
